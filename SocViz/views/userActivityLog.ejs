@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+
+<!--extends navigation bar from layout-->
+<% include ./layout %>
+
+<body>
+<div class="container">
+
+    <div class="page-header text-center">
+        <h1><span class="fa fa-file-code-o"></span> Adaptive assignment </h1>
+        <!--<a href="" class="btn btn-default btn-sm">Back</a>-->
+    </div>
+    <div class="row">
+        <div class="well">
+            <h3><span class="fa fa-tasks"></span> User Activity</h3>
+            <ul class="list-group">
+                <table class="table">
+                    <tr class="thead-inverse">
+                        <th>Type</th><th>Time Stamp</th><th>Behaviour</th>
+                    </tr>
+
+                    <% for (var i =data.length - 1; i >0 ; i--) { %>
+                    <tr>
+                        <td><%= data[i].Activity %></td>
+                        <td><%= data[i].Date %></td>
+                        <td><%= data[i].Description %></td>
+                    </tr>
+                    <% } %>
+                </table>
+            </ul>
+            </p>
+        </div>
+    </div>
+
+</div>
+</body>
+<script>
+    var data1=" <%= data  %> ";
+    console.log(data1);
+</script>
+</html>
+
+

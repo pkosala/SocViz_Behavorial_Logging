@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<% include ./layout %>
+<text style="padding:20px "> Select a user: </text>
+<select id="selectUser" value="All">
+</select>
+<div id="bubbleChart" style="padding:20px "></div>
+<div class="container" style="margin-left: 0px; margin-right: 0px; margin-top:50px; width: auto;">
+    <div class="row">
+        <div class="well">
+            <div class="table-responsive"></div>
+            <div id='dashboard1'></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="well">
+                <h4>Above graphs provide the tag usage for each user and all users:</h4>
+
+                <ul>
+                    <li>Every activity on stackoverflow is associated with a set of tags. Analysis of these tags
+                    gives us the idea which user is interested in which topic/tag</li>
+                    <li> The size of each bubble represents the number of times the tag use searched either.
+                    </li>
+                    <li>The color of the bubble represents the activity which lead user to refer to this tag.
+                    </li>
+                    <li>
+                        The default view loads all the tags referred by all the users. You can view the tag cloud for each user
+                        by selecting the user from the dropdown.
+                    </li></ul>
+
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="well">
+                <h3>Pattern Analysis:</h3>
+                <ul>
+                    <li>This bubble chart represents the interest of users in a topic.
+                    </li>
+                    <li>They compare the behavior of each user with average user and other users in the system.
+                    </li>
+                    <li>This view will help us identify the correct recommendations for each user.
+                    </li>
+                    <li>For example: "string" tag was referred by all users through upvote and page browse activities. This means that the queries
+                        users had for strings topic were present in stackoverflow and users found it very helpful.
+                    </li>
+                    <li>User pkosala has done browsing on a variety of topic, but very little of other activities.
+                    </li>
+                    <li>
+                        User "bbb" has most upvotes for topic "punctuation, python and string" but very less browsing history on these topics. This
+                        means that the user has upvoted few items multiple times which is implausible behavior and can help flag suspicious users.
+                    </li>
+                    <li>
+                        User "ccc" behavior is consistent in that, he browsed topics related to java and looked up beyond page 1 and opened a few questions
+                        in the same topics. Such behavior can help us identify true users.
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!--<svg width="960" height="960" font-family="sans-serif" font-size="10" text-anchor="middle"></svg>-->
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+</html>
+<script>
+    userData = []
+    <% for (var i = data.length - 1; i > 0 ; i--) { %>
+    var t = <%-JSON.stringify(data[i])%>;
+    userData.push(t)
+    <% } %>
+    var uniqueUsers = [];
+    for(i = 0; i< userData.length; i++){
+        if(uniqueUsers.indexOf(userData[i].UserId) === -1){
+            uniqueUsers.push(userData[i].UserId);
+        }
+    }
+    uniqueUsers.unshift("All");
+    var selectElement = document.getElementById("selectUser");
+    // var options = ["1", "2", "3", "4", "5"];
+
+    for (var i = 0; i < uniqueUsers.length; i++) {
+        var opt = uniqueUsers[i];
+        var el = document.createElement("option");
+        el.textContent = opt;
+        el.value = opt;
+        selectElement.appendChild(el);
+    }
+
+    concatData = []
+    for(x in userData){
+        for(y in userData[x]["Tags"]){
+            // var t = userData[x]["Activity"]+"."+userData[x]["Tags"][y]
+            var t = userData[x]["UserId"]+"."+userData[x]["Activity"]+"."+userData[x]["Tags"][y]
+            concatData.push({"id":t,"value":1,"group": userData[x]["UserId"]})
+        }
+    }
+    for(x in userData){
+        for(y in userData[x]["Tags"]){
+            // var t = userData[x]["Activity"]+"."+userData[x]["Tags"][y]
+            var t = "All"+"."+userData[x]["Activity"]+"."+userData[x]["Tags"][y]
+            concatData.push({"id":t,"value":1,"group": "All"})
+        }
+    }
+    console.log(concatData)
+
+    function generateDataForBubbleChart(entries) {
+        var result = {};
+        entries.forEach(function(val) {
+            var key = val.group + ":" + val.id;
+
+            result[key] = result[key] || { group: val.group, id: val.id, value: val.value };
+
+            result[key].value++;
+        });
+        // Map an array of keys into an array of values
+        return Object.keys(result).map(function(key) {
+            return(result[key]);
+        })
+    }
+    var datasetForBubbleChart = generateDataForBubbleChart(concatData)
+    console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    console.log(datasetForBubbleChart)
+    console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+    function getFilteredDataForBubbleChart(user){
+        var filteredData = []
+        for(x in datasetForBubbleChart){
+            if(datasetForBubbleChart[x]["group"]==user){
+                filteredData.push({"id":datasetForBubbleChart[x]["id"],"value":datasetForBubbleChart[x]["value"]})
+            }
+        }
+        console.log(filteredData);
+        return filteredData;
+    }
+    $( "#selectUser" ).change(function() {
+        var user = document.getElementById("selectUser").value;
+        var filteredData = getFilteredDataForBubbleChart(user);
+        // console.log(filteredData)
+        // visual(filteredData);
+        visual(getFilteredDataForBubbleChart(user))
+
+    });
+</script>
+<script>
+
+    function visual(classes) {
+        // if (error) throw error;
+
+        d3.select("#bubbleChart").select("svg").remove();
+        // svg width="960" height="960" font-family="sans-serif" font-size="10" text-anchor="middle"
+
+        var svg = d3.select("#bubbleChart")
+            .append("svg")
+            .attr("width", 960)
+            .attr("height", 960)
+
+            // .attr("id","barChartPlot")
+        ;
+        var width = +svg.attr("width"),
+            height = +svg.attr("height");
+
+        var format = d3.format(",d");
+
+        var color = d3.scaleOrdinal(d3.schemeCategory20c);
+
+        var pack = d3.pack()
+            .size([width, height])
+            .padding(1.5);
+        var root = d3.hierarchy({children: classes})
+            .sum(function(d) { return d.value; })
+            .each(function(d) {
+                if (id = d.data.id) {
+                    var id, i = id.lastIndexOf(".");
+                    d.id = id;
+                    d.package = id.slice(0, i);
+                    d.class = id.slice(i + 1);
+                }
+            });
+
+        var node = svg.selectAll(".node")
+            .data(pack(root).leaves())
+            .enter().append("g")
+            .attr("class", "node")
+            .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+        node.append("circle")
+            .attr("id", function(d) { return d.id; })
+            .attr("r", function(d) { return d.r; })
+            .style("fill", function(d) { return color(d.package); });
+
+        node.append("clipPath")
+            .attr("id", function(d) { return "clip-" + d.id; })
+            .append("use")
+            .attr("xlink:href", function(d) { return "#" + d.id; });
+
+        node.append("text")
+            .attr("clip-path", function(d) { return "url(#clip-" + d.id + ")"; })
+            .selectAll("tspan")
+            .data(function(d) { return d.class.split(/(?=[A-Z][^A-Z])/g); })
+            .enter().append("tspan")
+            .attr("x", -8)
+            .attr("y", function(d, i, nodes) { return 13 + (i - nodes.length / 2 - 0.5) * 10; })
+            .text(function(d) { return d; });
+
+        node.append("title")
+            .text(function(d) { return d.id + "\n" + format(d.value); });
+    };
+    visual(getFilteredDataForBubbleChart("All"))
+    // );
+
+</script>

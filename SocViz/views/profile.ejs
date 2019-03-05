@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!--extends navigation bar from layout-->
+<% include ./layout %>
+
+<body>
+<div class="container">
+    <div class="page-header text-center Black">
+        <h1 class="Black"><span class="fa fa-file-code-o"></span> Adaptive Web Assignment </h1>
+    </div>
+    <div class="row">
+        <div class="col-sm-8">
+            <div class="well">
+                <h3>Welcome,<%= user.local.username %>!      Your Login History:</h3>
+                <h4 class="Black">Go to <a href="https://stackoverflow.com/questions/tagged/java?sort=frequent&pageSize=15" class="Blue" target="_blank"><span class="glyphicon Black"></span>Stackoverflow</a> to clear your java doubts.</h4>
+
+                <ul class="list-group">
+                    <% for(var i = 0; i < user.loginHistory.length; i++) { %>
+                    <li class="list-group-item"><%= user.loginHistory[i] %></li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

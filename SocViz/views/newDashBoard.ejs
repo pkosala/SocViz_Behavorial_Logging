@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<% include ./layout %>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/series-label.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+<div id="container" style="padding:20px; min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+<div class="container" style="padding:20px; margin-left: 0px; margin-right: 0px; margin-top: 80px; width: auto;">
+    <div class="row">
+        <div class="well">
+            <div class="table-responsive"></div>
+            <div id='dashboard1'></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="well">
+                <h4>Above graphs provides of user activity against average user on stack overflow:</h4>
+
+                <ul>
+                    <li>Doughnut chart represents total of activities performed by each user.</li>
+                    <li> Bar chart represent activity count of each user for 10 activity types listed in the "Why did I log these?" section. On default load it shows the activity count for all users.
+                    </li>
+                    <li>By Clicking on a user you can remove a user from the view and add it back by clicking on it again
+                    </li>
+                    <li>
+                        Line chart represents the activity of average user. Removing any user from the view will not change this line chart.
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="well">
+                <h3>Obesrvations:</h3>
+                <ul>
+                    <li>These interactive graphs provide a comparison of each user with other users and average user.
+                    </li>
+                    <li>Though the overall activity of user pkosala is the most, we note that user "bbb" has done most upvotes.
+                    </li>
+                    <li>User "pkosala" has browsed most of the pages.
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+</html>
+<!--Pre-process data for charts-->
+<script>
+    userData = []
+    <% for (var i = data.length - 1; i > 0 ; i--) { %>
+    var t = <%-JSON.stringify(data[i])%>;
+    userData.push(t)
+    <% } %>
+
+    // console.log(userData)
+
+    seriesArray =[];
+    barData = []
+    pieData = []
+    lineData = []
+    // Data for pie
+    var occurences = userData.reduce(function (r, row) {
+        r[row.UserId] = ++r[row.UserId] || 1;
+        return r;
+    }, {});
+    var i = 0;
+    var pieData = Object.keys(occurences).map(function (key) {
+        return { name: key, y: occurences[key], color: Highcharts.getOptions().colors[i++]};
+    });
+    seriesArray.push({
+        type: 'pie',
+        name: 'Total Activity',
+        data: pieData,
+        center: [100, 80],
+        size: 100,
+        showInLegend: false,
+        dataLabels: {
+            enabled: false
+        }
+    })
+    // Data for bar
+    function generateDataForBarChart(entries) {
+        var result = {};
+        entries.forEach(function(val) {
+            var key = val.UserId + ":" + val.Activity;
+
+            result[key] = result[key] || { group: val.UserId, category: val.Activity, measure: 1 };
+
+            result[key].measure++;
+        });
+        var occurences1 = userData.reduce(function (r, row) {
+            r[row.Activity] = ++r[row.Activity] || 1;
+            return r;
+        }, {});
+        var totalGroup = Object.keys(occurences1).map(function (key) {
+            return { group: "average", category: key, measure: Math.round(occurences1[key]/Object.getOwnPropertyNames(occurences).length)};
+        });
+        // Map an array of keys into an array of values
+        return Object.keys(result).map(function(key) {
+            return(result[key]);
+        }).concat(totalGroup);
+    }
+    var datasetForBarChart = generateDataForBarChart(userData)
+    console.log(datasetForBarChart);
+    var categories = ['Bookmark','Change_Page','Code_Click','Comment_Click','Copy','Downvote',
+        'PageBrowse', 'Post_Answer', 'Post_Question', 'Question_Link', 'Suggest_Edit',
+        'Tag_Click','Unbookmark','Upvote']
+    var actual = ["BookMark!","ChangePage!","Code_Click","ClickComment!", "Copy!","DownVote!",
+        "PageBrowse!","PostAns!","PostQue!","ClickOnQuestion!","EditSuggest!","TagClick!",
+        "UnBookMark!","UpVote!"]
+
+    var uniqueUsers = $.unique(userData.map(function (d) {return d.UserId;}));
+    uniqueUsers.push("average");
+    // console.log(uniqueUsers);
+    for(x in uniqueUsers){
+        // console.log(uniqueUsers[x])
+        var dataArray = Array.apply(null, new Array(actual.length)).map(Number.prototype.valueOf,0);
+        for (var y in actual) {
+            for (z in datasetForBarChart) {
+                if (datasetForBarChart[z]["group"] == uniqueUsers[x] && datasetForBarChart[z]["category"] == actual[y]) {
+                    dataArray[y] = datasetForBarChart[z]["measure"]
+                    break
+                }
+            }
+        }
+        if(uniqueUsers[x] != "average") {
+            seriesElement = {
+                type: 'column',
+                name: uniqueUsers[x],
+                data: dataArray
+            }
+            seriesArray.push(seriesElement);
+        }else{
+            seriesArray.push({
+                type: 'spline',
+                name: 'Average',
+                data: dataArray,
+                marker: {
+                    lineWidth: 2,
+                    lineColor: Highcharts.getOptions().colors[actual.length],
+                    fillColor: 'white'
+                }});
+        }
+    }
+    console.log(seriesArray);
+</script>
+<script>
+
+    Highcharts.chart('container', {
+        title: {
+            text: 'User vs Average user Activity'
+        },
+        xAxis: {
+            categories: categories
+        },
+        labels: {
+            items: [{
+                html: 'Total activity by user',
+                style: {
+                    left: '50px',
+                    top: '18px',
+                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'black'
+                }
+            }]
+        },
+        series: seriesArray
+    });
+
+</script>

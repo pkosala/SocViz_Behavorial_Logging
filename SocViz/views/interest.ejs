@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+
+<!--extends navigation bar from layout-->
+<% include ./layout %>
+
+<body
+<div class="my-3 p-3 bg-white rounded box-shadow" style="padding:20px">
+    <h4 class="border-bottom border-gray pb-2 mb-0"><strong>Information</strong></h4>
+    <div class="media pt-3">
+        <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+            <strong class="d-block text-gray-dark">Tags Clicked</strong><br>
+            If a user clicks on a tag , it implies that user is more interested in knowing about the topic. This interest might
+            arise from being an expert or a novice in the topic. Knowing the level of knowlege of user is very useful in making
+            better adaptive systems.
+        </p>
+    </div>
+    <div class="media pt-3">
+        <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+            <strong class="d-block text-gray-dark">Edit Question Click</strong><br>
+            User edits a question to add more details to the question or based on suggestions or to correct some information.
+            These information helps us filter genuine users and users who ask questions.
+        </p>
+    </div>
+    <div class="media pt-3">
+        <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+            <strong class="d-block text-gray-dark">Upvote/downvote click</strong><br>
+            This activity is particularly helpful in identifying possibly correct answers to unanswered questions.
+            Similarly, down votes can flag users who are not answering questions correctly.
+        </p>
+    </div>
+    <div class="media pt-3">
+        <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+            <strong class="d-block text-gray-dark">Copy the text</strong><br>
+            If a user is coping code or answer, it can help us find more relavant answers to unanswered questions.
+            When other users land on such questions, we can order the answer such that they appear at the top apart from using
+            upvotes a measure for correctness.
+        </p>
+    </div>
+    <div class="media pt-3">
+        <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+            <strong class="d-block text-gray-dark">Question Link</strong><br>
+            This tells which are the popular questions under a topic. When a new user comes to the system this information can be
+            used to make suggestions when we don't have any behavior history of the new user.
+        </p>
+    </div>
+    <div class="media pt-3">
+        <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+            <strong class="d-block text-gray-dark">Post answer</strong><br>
+            Posting an answer informs the knowledge of the user in the topic. But mere answering the question does not
+            imply the user's level of knowledge, other measures like whether other users found this answer useful are also
+            important in making such decisions.
+        </p>
+    </div>
+    <div class="media pt-3">
+        <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+            <strong class="d-block text-gray-dark">Post Question</strong><br>
+            Post question event is useful to know about the curiosity of the user in particular field<br>
+        </p>
+    </div>
+    <div class="media pt-3">
+        <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+            <strong class="d-block text-gray-dark">Bookmark/Unbookmark</strong><br>
+            Posting a question implies the user's interest in a new topic. We can make suggestion accordingly.<br>
+        </p>
+    </div>
+    <div class="media pt-3">
+        <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+            <strong class="d-block text-gray-dark">Change Page</strong><br>
+            Often a good recommendation system show the relavant search result on the first page, but if user can't find
+            relavant information on first page he might browse to further pages or when user is randomly exploring the topic.
+            The motivation behind the change page event is important in using this event.
+        </p>
+    </div>
+    <div class="media pt-3">
+        <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+            <strong class="d-block text-gray-dark">Future Scope of these logs:</strong><br>
+            The visuals only capture 4 dimensional view of usage: Time, user, activity and tags. We can further improve to
+            clusters users based multiple criteria like: behavior, topics of interest, level of expertise.
+            We can also capture the amount of time each user spent on the question/page.
+        </p>
+    </div>
+</div>
+</body>
