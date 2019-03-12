@@ -39,6 +39,6 @@
 * https://youtu.be/PfR6CZ2lujQ
 
 ## Dashboard:
-![Dashboard](https://github.com/pkosala/Programmers-Pet-stackoverflow/blob/master/SparkSOF/src/imgs/Pipeline.PNG)
-![User activity vs Avg User activity](https://github.com/pkosala/Programmers-Pet-stackoverflow/blob/master/SparkSOF/src/imgs/Pipeline.PNG)
-![Bubble chart to view importance of tags](https://github.com/pkosala/Programmers-Pet-stackoverflow/blob/master/SparkSOF/src/imgs/Pipeline.PNG)
+![Dashboard](https://github.com/pkosala/SocViz_Behavorial_Logging/blob/master/imgs/Dashboard.png)
+![User activity vs Avg User activity](https://github.com/pkosala/SocViz_Behavorial_Logging/blob/master/imgs/Combination_Chart.png)
+![Bubble chart to view importance of tags](https://github.com/pkosala/SocViz_Behavorial_Logging/blob/master/imgs/Bubble.png)
